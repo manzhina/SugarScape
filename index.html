@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SugarScape Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #controls {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        #controls div {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        #controls label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #controls input, #controls select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #controls button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #controls button:hover {
+            background-color: #45a049;
+        }
+
+        #simulationInfo {
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #simulationCanvas {
+            border: 2px solid #333;
+            background-color: #fff;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="controls">
+            <button id="startButton">Start</button>
+            <button id="stopButton">Stop</button>
+            <button id="resetButton">Reset</button>
+
+            <!-- Параметры сетки -->
+            <div>
+                <label for="gridWidthInput">Grid Width:</label>
+                <input type="number" id="gridWidthInput" value="20" min="5" max="100">
+            </div>
+            <div>
+                <label for="gridHeightInput">Grid Height:</label>
+                <input type="number" id="gridHeightInput" value="20" min="5" max="100">
+            </div>
+
+            <!-- Распределение сахара-->
+            <div>
+                <label for="sugarDistributionSelect">Sugar Distribution:</label>
+                <select id="sugarDistributionSelect">
+                    <option value="uniform">Uniform</option>
+                    <option value="clustered" selected>Clustered</option>
+                    <option value="random">Random</option>
+                </select>
+            </div>
+
+            <!-- Количество агентов -->
+            <div>
+                <label for="numAgentsInput">Number of Agents:</label>
+                <input type="number" id="numAgentsInput" value="10" min="1" max="1000">
+            </div>
+
+            <!-- Параметры агентов -->
+            <div>
+                <label for="initialSugarInput">Agent Initial Sugar:</label>
+                <input type="number" id="initialSugarInput" value="20" min="1" max="100">
+            </div>
+            <div>
+                <label for="metabolicRateInput">Metabolic Rate:</label>
+                <input type="number" id="metabolicRateInput" value="1" min="0" max="10">
+            </div>
+            <div>
+                <label for="visionInput">Vision Range:</label>
+                <input type="number" id="visionInput" value="3" min="1" max="10">
+            </div>
+            <div>
+                <label for="speedInput">Movement Speed:</label>
+                <input type="number" id="speedInput" value="1" min="1" max="5">
+            </div>
+
+            <!-- Параметры сахара -->
+            <div>
+                <label for="sugarRegenRateInput">Sugar Regeneration Rate:</label>
+                <input type="number" id="sugarRegenRateInput" value="1" min="0" max="5" step="0.1">
+            </div>
+        </div>
+
+        <div id="simulationInfo">Agents Alive: 10</div>
+
+        <canvas id="simulationCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <script type="module" src="main.js"></script>
+
+</body>
+</html>
