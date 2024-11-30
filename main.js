@@ -11,16 +11,23 @@ function initializeSimulation() {
         gridHeight: 20,
         numAgents: 10,
         sugarDistribution: 'clustered',
+        sugarRegenerationRate: 1.0,
         agentConfig: {
             initialSugar: 20,
             metabolicRate: 1,
             vision: 3,
             speed: 1,
-            sugarRegenerationRate: 1.0
+            reproduceThreshold: 40,
+            maxAge: 20
+        },
+        distributionParams: {
+            numClusters: 5,
+            clusterRadius: 2
         }
+        
     };
 
-    const grid = new Grid(parameters.gridWidth, parameters.gridHeight, parameters.sugarDistribution, parameters.agentConfig.sugarRegenerationRate);
+    const grid = new Grid(parameters.gridWidth, parameters.gridHeight, parameters.sugarDistribution, parameters.sugarRegenerationRate, parameters.distributionParams);
 
     const agents = [];
     for (let i = 0; i < parameters.numAgents; i++) {
@@ -30,7 +37,7 @@ function initializeSimulation() {
             startX = Math.floor(Math.random() * parameters.gridWidth);
             startY = Math.floor(Math.random() * parameters.gridHeight);
             cell = grid.getCell(startX, startY);
-        } while (!cell || cell.currentSugar === 0);
+        } while (!cell);
 
         const agent = new Agent(
             i,
@@ -39,7 +46,9 @@ function initializeSimulation() {
             parameters.agentConfig.initialSugar,
             parameters.agentConfig.metabolicRate,
             parameters.agentConfig.vision,
-            parameters.agentConfig.speed
+            parameters.agentConfig.speed,
+            parameters.agentConfig.reproduceThreshold, 
+            parameters.agentConfig.maxAge
         );
         agents.push(agent);
     }

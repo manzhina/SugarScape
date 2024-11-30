@@ -1,17 +1,24 @@
 
 import { Cell } from './Cell.js';
 export class Grid {
-    constructor(width, height, distributionType = 'uniform', replenishmentRate = 1.0) {
-        console.log(distributionType)
+    constructor(width, height, distributionType = 'uniform', replenishmentRate = 1.0, distributionParams) {
         this.width = width;
         this.height = height;
         this.replenishmentRate = replenishmentRate;
+        this.distributionParams = distributionParams;
+        this.clasters = []
         this.cells = this.initializeGrid(distributionType);
+
     }
 
     initializeGrid(distributionType) {
         const grid = [];
-
+        if (distributionType === 'multiCluster') {
+            this.clusters = this.generateClusters(
+                this.distributionParams.numClusters || 5,
+                this.distributionParams.clusterRadius || 2
+            );
+        }
         for (let x = 0; x < this.width; x++) {
             const row = [];
             for (let y = 0; y < this.height; y++) {
@@ -36,6 +43,9 @@ export class Grid {
             case 'clustered':
                 console.log("chosen")
                 return this.getClusteredSugar(x, y); // Кластерное распределение
+            case 'multiCluster':
+                console.log(this.getMultiClusteredSugar(x, y, this.clusters));
+                return this.getMultiClusteredSugar(x, y, this.clusters);
             default:
                 return 3; 
         }
@@ -49,6 +59,38 @@ export class Grid {
         const sugarLevel = 5 - Math.floor((distanceToCenter / maxDistance) * 5);
         console.log(sugarLevel)
         return sugarLevel;
+    }
+    getMultiClusteredSugar(x, y, clusters) {
+        let sugar = 0;
+        let minDist = Infinity;
+        let nearestCluster = null;
+    
+        clusters.forEach(cluster => {
+            const distance = Math.sqrt((x - cluster.x) ** 2 + (y - cluster.y) ** 2);
+            if (distance <= cluster.radius) {
+                const sugarValue = Math.max(0, (1 - (distance / cluster.radius)) * 5); 
+                if (distance < minDist) {
+                    minDist = distance;
+                    sugar = sugarValue;
+                    nearestCluster = cluster;
+                }
+            }
+        });
+        return sugar;
+    }
+
+    generateClusters(numClusters, clusterRadius) {
+        const clusters = [];
+        for (let i = 0; i < numClusters; i++) {
+            const cluster = {
+                x: Math.floor(Math.random() * this.width),
+                y: Math.floor(Math.random() * this.height),
+                radius: clusterRadius
+            };
+            clusters.push(cluster);
+            console.log(`Cluster ${i + 1}: (${cluster.x}, ${cluster.y}), Radius: ${cluster.radius}`);
+        }
+        return clusters;
     }
 
     update() {

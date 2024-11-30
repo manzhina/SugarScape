@@ -78,6 +78,10 @@
             align-items: center;
             width: 100%;
         }
+
+        .hidden {
+            display: none !important;;
+        }
     </style>
 </head>
 <body>
@@ -105,7 +109,20 @@
                     <option value="uniform">Uniform</option>
                     <option value="clustered" selected>Clustered</option>
                     <option value="random">Random</option>
+                    <option value="multiCluster">MultiCluster</option> <!-- Новая опция -->
                 </select>
+            </div>
+
+            <!-- Дополнительные параметры для multiCluster -->
+            <div id="multiClusterParams" class="hidden">
+                <div>
+                    <label for="numClustersInput">Number of Clusters:</label>
+                    <input type="number" id="numClustersInput" value="5" min="1" max="100">
+                </div>
+                <div>
+                    <label for="clusterRadiusInput">Cluster Radius:</label>
+                    <input type="number" id="clusterRadiusInput" value="2" min="1" max="10">
+                </div>
             </div>
 
             <!-- Количество агентов -->
@@ -130,6 +147,14 @@
             <div>
                 <label for="speedInput">Movement Speed:</label>
                 <input type="number" id="speedInput" value="1" min="1" max="5">
+            </div>
+            <div>
+                <label for="reproduceThresholdInput">Reproduce Threshold:</label>
+                <input type="number" id="reproduceThresholdInput" value="40" min="1" max="1000">
+            </div>
+            <div>
+                <label for="maxAgeInput">Max Age:</label>
+                <input type="number" id="maxAgeInput" value="30" min="1" max="1000">
             </div>
 
             <!-- Параметры сахара -->

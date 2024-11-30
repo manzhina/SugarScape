@@ -1,13 +1,16 @@
 
 export class Agent {
-    constructor(id, startX, startY, initialSugar, metabolicRate, vision, speed) {
+    constructor(id, startX, startY, initialSugar, metabolicRate, vision, speed, reproduceThreshold, maxAge) {
         this.id = id;
+        this.age = 0;
         this.position = { x: startX, y: startY };
         this.sugar = initialSugar;            
         this.metabolicRate = metabolicRate;      
         this.vision = vision;
         this.speed = speed;
+        this.reproduceThreshold = reproduceThreshold
         this.isAlive = true;
+        this.maxAge = maxAge;
         this.stepsWithoutSugar = 0;
         this.maxStepsWithoutSugar = 5;
     }
@@ -16,7 +19,35 @@ export class Agent {
         const neighbors = grid.getNeighbors(this.position.x, this.position.y, this.vision);
         return neighbors;
     }
-    act(grid, occupiedPositions = null) {
+    reproduce(grid, agents, occupiedPositions) {
+        if (this.sugar >= this.reproduceThreshold) { // Порог размножения
+            const neighbors = grid.getNeighbors(this.position.x, this.position.y, 1);
+            const emptyCells = neighbors.filter(cell => cell.currentSugar === 0 && (!occupiedPositions || !occupiedPositions.has(`${cell.position.x},${cell.position.y}`)));
+    
+            if (emptyCells.length > 0) {
+                const targetCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                const childAgent = new Agent(
+                    agents.length, 
+                    targetCell.position.x,
+                    targetCell.position.y,
+                    this.sugar / 2, // Передаем половину сахара ребенку
+                    this.metabolicRate,
+                    this.vision,
+                    this.speed,
+                    this.reproduceThreshold,
+                    this.maxAge
+                );
+    
+                agents.push(childAgent);
+                if (occupiedPositions) {
+                    occupiedPositions.add(`${targetCell.position.x},${targetCell.position.y}`);
+                }
+                this.sugar /= 2; // Потеря сахара на размножение
+            }
+        }
+    }
+    
+    act(grid, agents = [], occupiedPositions = null,) {
         if (!this.isAlive) return;
 
         const cellsInView = this.perceiveEnvironment(grid);
@@ -36,6 +67,7 @@ export class Agent {
         }
 
         this.metabolize();
+        this.reproduce(grid, agents, occupiedPositions);
         this.checkVitalSigns();
     }
 
@@ -91,10 +123,13 @@ export class Agent {
 
 
     checkVitalSigns() {
-        if (this.sugar <= 0) {
-            if (this.stepsWithoutSugar >= this.maxStepsWithoutSugar) {
-                this.isAlive = false;  // Агент умирает, если превышен лимит шагов без сахара
-            }
+        this.age++;
+        console.log(this.age, this.maxAge)
+        if (this.sugar <= 0 && this.stepsWithoutSugar >= this.maxStepsWithoutSugar) {
+            this.isAlive = false; 
+        }
+        if (this.age >= this.maxAge) {
+            this.isAlive = false; // Умирает от старости
         }
     }
 

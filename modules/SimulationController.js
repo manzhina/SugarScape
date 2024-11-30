@@ -21,9 +21,10 @@ export class SimulationController {
     }
 
     initializeSimulation(parameters) {
-        const { gridWidth, gridHeight, sugarDistribution, numAgents, agentConfig } = parameters;
-    
-        this.grid = new Grid(gridWidth, gridHeight, sugarDistribution, agentConfig.sugarRegenerationRate);
+        const { gridWidth, gridHeight, sugarDistribution, numAgents, sugarRegenerationRate, agentConfig, distributionParams } = parameters;
+        console.log(distributionParams)
+
+        this.grid = new Grid(gridWidth, gridHeight, sugarDistribution, sugarRegenerationRate, distributionParams);
     
         this.agents = [];
         for (let i = 0; i < numAgents; i++) {
@@ -33,7 +34,7 @@ export class SimulationController {
                 startX = Math.floor(Math.random() * gridWidth);
                 startY = Math.floor(Math.random() * gridHeight);
                 cell = this.grid.getCell(startX, startY);
-            } while (!cell || cell.currentSugar === 0);
+            } while (!cell);
     
             const agent = new Agent(
                 i,
@@ -42,7 +43,9 @@ export class SimulationController {
                 agentConfig.initialSugar,
                 agentConfig.metabolicRate,
                 agentConfig.vision,
-                agentConfig.speed
+                agentConfig.speed,
+                agentConfig.reproduceThreshold,
+                agentConfig.maxAge
             );
             this.agents.push(agent);
         }
@@ -77,14 +80,14 @@ export class SimulationController {
     update() {
         for (let agent of this.agents) {
             if (agent.isAlive) {
-                agent.act(this.grid); 
+                agent.act(this.grid, this.agents); 
             }
         }
 
         this.agents = this.agents.filter(agent => agent.isAlive);
 
         this.grid.update();
-
+        this.visualization.agents = this.agents;
         this.visualization.render();
 
         this.notifyUpdate();
