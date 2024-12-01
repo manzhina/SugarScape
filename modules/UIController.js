@@ -12,7 +12,6 @@ export class UIController {
                 initialSugar: 20,
                 metabolicRate: 1,
                 vision: 3,
-                speed: 1,
                 reproduceThreshold: 40,
                 maxAge: 20
             },
@@ -134,15 +133,6 @@ export class UIController {
             } else {
                 alert('Max Age must be between 1 and 1000');
                 event.target.value = this.parameters.agentConfig.maxAge;
-            }
-        });
-        document.getElementById('speedInput').addEventListener('change', (event) => {
-            const value = parseInt(event.target.value);
-            if (value >= 1 && value <= 5) {
-                this.parameters.agentConfig.speed = value;
-            } else {
-                alert('Movement Speed must be between 1 and 5');
-                event.target.value = this.parameters.agentConfig.speed;
             }
         });
 

@@ -16,7 +16,6 @@ function initializeSimulation() {
             initialSugar: 20,
             metabolicRate: 1,
             vision: 3,
-            speed: 1,
             reproduceThreshold: 40,
             maxAge: 20
         },
@@ -46,7 +45,6 @@ function initializeSimulation() {
             parameters.agentConfig.initialSugar,
             parameters.agentConfig.metabolicRate,
             parameters.agentConfig.vision,
-            parameters.agentConfig.speed,
             parameters.agentConfig.reproduceThreshold, 
             parameters.agentConfig.maxAge
         );

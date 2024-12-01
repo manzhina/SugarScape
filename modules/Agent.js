@@ -1,13 +1,12 @@
 
 export class Agent {
-    constructor(id, startX, startY, initialSugar, metabolicRate, vision, speed, reproduceThreshold, maxAge) {
+    constructor(id, startX, startY, initialSugar, metabolicRate, vision, reproduceThreshold, maxAge) {
         this.id = id;
         this.age = 0;
         this.position = { x: startX, y: startY };
         this.sugar = initialSugar;            
         this.metabolicRate = metabolicRate;      
         this.vision = vision;
-        this.speed = speed;
         this.reproduceThreshold = reproduceThreshold
         this.isAlive = true;
         this.maxAge = maxAge;
@@ -33,7 +32,6 @@ export class Agent {
                     this.sugar / 2, // Передаем половину сахара ребенку
                     this.metabolicRate,
                     this.vision,
-                    this.speed,
                     this.reproduceThreshold,
                     this.maxAge
                 );

@@ -43,7 +43,6 @@ export class SimulationController {
                 agentConfig.initialSugar,
                 agentConfig.metabolicRate,
                 agentConfig.vision,
-                agentConfig.speed,
                 agentConfig.reproduceThreshold,
                 agentConfig.maxAge
             );
