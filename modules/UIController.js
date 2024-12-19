@@ -1,4 +1,3 @@
-
 export class UIController {
     constructor(simulationController) {
         this.simulationController = simulationController;
@@ -6,7 +5,6 @@ export class UIController {
             gridWidth: 20,
             gridHeight: 20,
             sugarDistribution: 'clustered',
-            numAgents: 10,
             sugarRegenerationRate: 1.0,
             agentConfig: {
                 initialSugar: 20,
@@ -18,6 +16,11 @@ export class UIController {
             distributionParams: {
                 numClusters: 5,
                 clusterRadius: 2
+            },
+            agentNumbers: {
+                random: 10,
+                max_sugar: 10,
+                avoid_crowds: 10
             }
         };
     }
@@ -29,8 +32,8 @@ export class UIController {
 
         this.bindParameterInputs();
 
-        this.simulationController.onUpdate((aliveAgents) => {
-            this.displaySimulationInfo(aliveAgents);
+        this.simulationController.onUpdate((aliveAgents, agents) => {
+            this.displaySimulationInfo(aliveAgents, agents);
         });
     }
 
@@ -38,7 +41,6 @@ export class UIController {
         document.getElementById('numClustersInput').addEventListener('change', (event) => {
             const value = parseInt(event.target.value);
             if (value >= 1 && value <= 100) {
-                console.log(value)
                 this.parameters.distributionParams.numClusters = value;
             } else {
                 alert('Number of Clusters must be between 1 and 100');
@@ -79,13 +81,31 @@ export class UIController {
             this.toggleMultiClusterParams();
         });
 
-        document.getElementById('numAgentsInput').addEventListener('change', (event) => {
+        document.getElementById('numRandomAgentsInput').addEventListener('change', (event) => {
             const value = parseInt(event.target.value);
-            if (value >= 1 && value <= 1000) {
-                this.parameters.numAgents = value;
+            if (value >= 0 && value <= 1000) {
+                this.parameters.agentNumbers.random = value;
             } else {
-                alert('Number of Agents must be between 1 and 1000');
-                event.target.value = this.parameters.numAgents;
+                alert('Number of Random Agents must be between 0 and 1000');
+                event.target.value = this.parameters.agentNumbers.random;
+            }
+        });
+        document.getElementById('numMaxSugarAgentsInput').addEventListener('change', (event) => {
+            const value = parseInt(event.target.value);
+            if (value >= 0 && value <= 1000) {
+                this.parameters.agentNumbers.max_sugar = value;
+            } else {
+                alert('Number of Max Sugar Agents must be between 0 and 1000');
+                event.target.value = this.parameters.agentNumbers.max_sugar;
+            }
+        });
+        document.getElementById('numAvoidCrowdsAgentsInput').addEventListener('change', (event) => {
+            const value = parseInt(event.target.value);
+            if (value >= 0 && value <= 1000) {
+                this.parameters.agentNumbers.avoid_crowds = value;
+            } else {
+                alert('Number of Avoid Crowds Agents must be between 0 and 1000');
+                event.target.value = this.parameters.agentNumbers.avoid_crowds;
             }
         });
 
@@ -129,7 +149,6 @@ export class UIController {
             const value = parseInt(event.target.value);
             if (value >= 1 && value <= 1000) {
                 this.parameters.agentConfig.maxAge = value;
-                console.log("aaaa")
             } else {
                 alert('Max Age must be between 1 and 1000');
                 event.target.value = this.parameters.agentConfig.maxAge;
@@ -156,6 +175,7 @@ export class UIController {
             multiClusterDiv.classList.add('hidden');
         }
     }
+
     handleStart() {
         this.simulationController.start();
     }
@@ -168,8 +188,14 @@ export class UIController {
         this.simulationController.reset(this.parameters);
     }
 
-    displaySimulationInfo(numAgentsAlive) {
+    displaySimulationInfo(numAgentsAlive, agents) {
         const infoDisplay = document.getElementById('simulationInfo');
-        infoDisplay.textContent = `Agents Alive: ${numAgentsAlive}`;
+        const counts = { random: 0, max_sugar: 0, avoid_crowds: 0 };
+        for (let agent of agents) {
+            if (agent.isAlive) {
+                counts[agent.strategy] = (counts[agent.strategy] || 0) + 1;
+            }
+        }
+        infoDisplay.textContent = `Agents Alive: ${numAgentsAlive} (Random: ${counts.random || 0}, Max Sugar: ${counts.max_sugar || 0}, Avoid Crowds: ${counts.avoid_crowds || 0})`;
     }
 }

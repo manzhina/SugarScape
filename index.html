@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SugarScape Simulation</title>
     <style>
         body {
@@ -92,7 +91,7 @@
             <button id="stopButton">Stop</button>
             <button id="resetButton">Reset</button>
 
-            <!-- Параметры сетки -->
+            <!-- Grid Parameters -->
             <div>
                 <label for="gridWidthInput">Grid Width:</label>
                 <input type="number" id="gridWidthInput" value="20" min="5" max="100">
@@ -102,18 +101,18 @@
                 <input type="number" id="gridHeightInput" value="20" min="5" max="100">
             </div>
 
-            <!-- Распределение сахара-->
+            <!-- Sugar Distribution -->
             <div>
                 <label for="sugarDistributionSelect">Sugar Distribution:</label>
                 <select id="sugarDistributionSelect">
                     <option value="uniform">Uniform</option>
                     <option value="clustered" selected>Clustered</option>
                     <option value="random">Random</option>
-                    <option value="multiCluster">MultiCluster</option> <!-- Новая опция -->
+                    <option value="multiCluster">MultiCluster</option> <!-- New option -->
                 </select>
             </div>
 
-            <!-- Дополнительные параметры для multiCluster -->
+            <!-- Additional parameters for multiCluster -->
             <div id="multiClusterParams" class="hidden">
                 <div>
                     <label for="numClustersInput">Number of Clusters:</label>
@@ -125,13 +124,21 @@
                 </div>
             </div>
 
-            <!-- Количество агентов -->
+            <!-- Number of Agents per Strategy -->
             <div>
-                <label for="numAgentsInput">Number of Agents:</label>
-                <input type="number" id="numAgentsInput" value="10" min="1" max="1000">
+                <label for="numRandomAgentsInput">Number of Random Agents:</label>
+                <input type="number" id="numRandomAgentsInput" value="10" min="0" max="1000">
+            </div>
+            <div>
+                <label for="numMaxSugarAgentsInput">Number of Max Sugar Agents:</label>
+                <input type="number" id="numMaxSugarAgentsInput" value="10" min="0" max="1000">
+            </div>
+            <div>
+                <label for="numAvoidCrowdsAgentsInput">Number of Avoid Crowds Agents:</label>
+                <input type="number" id="numAvoidCrowdsAgentsInput" value="10" min="0" max="1000">
             </div>
 
-            <!-- Параметры агентов -->
+            <!-- Agent Parameters -->
             <div>
                 <label for="initialSugarInput">Agent Initial Sugar:</label>
                 <input type="number" id="initialSugarInput" value="20" min="1" max="100">
@@ -153,14 +160,14 @@
                 <input type="number" id="maxAgeInput" value="30" min="1" max="1000">
             </div>
 
-            <!-- Параметры сахара -->
+            <!-- Sugar Parameters -->
             <div>
                 <label for="sugarRegenRateInput">Sugar Regeneration Rate:</label>
                 <input type="number" id="sugarRegenRateInput" value="1" min="0" max="5" step="0.1">
             </div>
         </div>
 
-        <div id="simulationInfo">Agents Alive: 10</div>
+        <div id="simulationInfo">Agents Alive: 30 (Random: 10, Max Sugar: 10, Avoid Crowds: 10)</div>
 
         <canvas id="simulationCanvas" width="800" height="600"></canvas>
     </div>

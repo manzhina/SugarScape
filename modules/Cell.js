@@ -1,4 +1,3 @@
-
 export class Cell {
     constructor(x, y, maxSugar, replenishmentRate) {
         this.position = { x: x, y: y };
@@ -6,7 +5,6 @@ export class Cell {
         this.currentSugar = this.maxSugar;
         this.replenishmentRate = replenishmentRate;
     }
-    //восстановление сахара со временем
     replenish() {
         if (this.currentSugar < this.maxSugar) {
             this.currentSugar = Math.min(this.maxSugar, this.currentSugar + this.replenishmentRate);

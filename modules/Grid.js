@@ -1,14 +1,13 @@
-
 import { Cell } from './Cell.js';
+
 export class Grid {
     constructor(width, height, distributionType = 'uniform', replenishmentRate = 1.0, distributionParams) {
         this.width = width;
         this.height = height;
         this.replenishmentRate = replenishmentRate;
         this.distributionParams = distributionParams;
-        this.clasters = []
+        this.clusters = [];
         this.cells = this.initializeGrid(distributionType);
-
     }
 
     initializeGrid(distributionType) {
@@ -30,21 +29,15 @@ export class Grid {
         return grid;
     }
 
-
     getInitialSugarValue(x, y, distributionType) {
-        console.log(distributionType)
         switch (distributionType) {
             case 'uniform':
-                console.log("chosen")
-                return 3; // Средний уровень сахара для равномерного распределения
+                return 3; 
             case 'random':
-                console.log("chosen")
                 return Math.floor(Math.random() * 5); 
             case 'clustered':
-                console.log("chosen")
-                return this.getClusteredSugar(x, y); // Кластерное распределение
+                return this.getClusteredSugar(x, y); 
             case 'multiCluster':
-                console.log(this.getMultiClusteredSugar(x, y, this.clusters));
                 return this.getMultiClusteredSugar(x, y, this.clusters);
             default:
                 return 3; 
@@ -57,14 +50,13 @@ export class Grid {
         const distanceToCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
         const maxDistance = Math.sqrt((centerX) ** 2 + (centerY) ** 2);
         const sugarLevel = 5 - Math.floor((distanceToCenter / maxDistance) * 5);
-        console.log(sugarLevel)
         return sugarLevel;
     }
+
     getMultiClusteredSugar(x, y, clusters) {
         let sugar = 0;
         let minDist = Infinity;
-        let nearestCluster = null;
-    
+
         clusters.forEach(cluster => {
             const distance = Math.sqrt((x - cluster.x) ** 2 + (y - cluster.y) ** 2);
             if (distance <= cluster.radius) {
@@ -72,7 +64,6 @@ export class Grid {
                 if (distance < minDist) {
                     minDist = distance;
                     sugar = sugarValue;
-                    nearestCluster = cluster;
                 }
             }
         });
@@ -88,7 +79,6 @@ export class Grid {
                 radius: clusterRadius
             };
             clusters.push(cluster);
-            console.log(`Cluster ${i + 1}: (${cluster.x}, ${cluster.y}), Radius: ${cluster.radius}`);
         }
         return clusters;
     }
@@ -107,7 +97,6 @@ export class Grid {
         }
         return null; 
     }
-    //Сканируем пространство в поле зрения 
     getNeighbors(x, y, vision) {
         const neighbors = [];
         for (let i = -vision; i <= vision; i++) {

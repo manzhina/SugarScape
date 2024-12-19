@@ -1,4 +1,3 @@
-
 export class Visualization {
     constructor(grid, agents, canvasId) {
         this.grid = grid;            
@@ -40,30 +39,33 @@ export class Visualization {
     }
 
     drawAgents() {
-        const agentCounts = Array.from({ length: this.grid.width }, () =>
-            Array(this.grid.height).fill(0)
-        );
-
-        this.agents.forEach(agent => {
+        this.context.globalAlpha = 1.0; 
+        for (let agent of this.agents) {
             if (agent.isAlive) {
-                agentCounts[agent.position.x][agent.position.y] += 1;
-            }
-        });
+                const x = agent.position.x;
+                const y = agent.position.y;
 
-        for (let x = 0; x < this.grid.width; x++) {
-            for (let y = 0; y < this.grid.height; y++) {
-                const count = agentCounts[x][y];
-                if (count > 0) {
-                    this.context.fillStyle = 'blue';
-                    this.context.font = `${this.cellSize / 2}px Arial`;
-                    this.context.textAlign = 'center';
-                    this.context.textBaseline = 'middle';
-                    this.context.fillText(
-                        count > 1 ? count : '●', 
-                        x * this.cellSize + this.cellSize / 2,
-                        y * this.cellSize + this.cellSize / 2
-                    );
+                let color;
+                if (agent.strategy === 'random') {
+                    color = 'red';
+                } else if (agent.strategy === 'max_sugar') {
+                    color = 'blue';
+                } else if (agent.strategy === 'avoid_crowds') {
+                    color = 'black';
+                } else {
+                    color = 'blue';
                 }
+
+                this.context.fillStyle = color;
+                this.context.beginPath();
+                this.context.arc(
+                    x * this.cellSize + this.cellSize / 2,
+                    y * this.cellSize + this.cellSize / 2,
+                    this.cellSize / 3,
+                    0,
+                    2 * Math.PI
+                );
+                this.context.fill();
             }
         }
     }
