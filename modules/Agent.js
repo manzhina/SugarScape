@@ -53,7 +53,7 @@ export class Agent {
 
     act(grid, agents = [], occupiedPositions = null, agentCounts = null) {
         if (!this.isAlive) return;
-
+    
         const currentPosKey = `${this.position.x},${this.position.y}`;
         if (occupiedPositions) {
             occupiedPositions.delete(currentPosKey);
@@ -64,10 +64,10 @@ export class Agent {
                 agentCounts.delete(currentPosKey);
             }
         }
-
+    
         const cellsInView = this.perceiveEnvironment(grid);
-
-        const targetCell = this.decideMove(cellsInView, occupiedPositions, agentCounts);
+    
+        const targetCell = this.decideMove(cellsInView, occupiedPositions, agentCounts, agents);
 
         if (targetCell) {
             this.moveTo(targetCell);
@@ -89,16 +89,16 @@ export class Agent {
         this.checkVitalSigns();
     }
 
-    decideMove(cells, occupiedPositions = null, agentCounts = null) {
+    decideMove(cells, occupiedPositions = null, agentCounts = null, agents = []) {
         const strategy = this.strategy;
-
+    
         let availableCells = cells;
         if (occupiedPositions) {
             availableCells = availableCells.filter(cell => !occupiedPositions.has(`${cell.position.x},${cell.position.y}`));
         }
-
+    
         if (availableCells.length === 0) return null;
-
+    
         switch (strategy) {
             case 'random':
                 return availableCells[Math.floor(Math.random() * availableCells.length)];
@@ -121,28 +121,13 @@ export class Agent {
                 return maxSugarCell;
 
             case 'avoid_crowds':
-                if (!agentCounts) {
-                    return availableCells[Math.floor(Math.random() * availableCells.length)];
-                }
-
-                let minAgents = Number.MAX_SAFE_INTEGER;
-                let bestCells = [];
-
-                for (let cell of availableCells) {
-                    const cellKey = `${cell.position.x},${cell.position.y}`;
-                    const agentsInCell = agentCounts.get(cellKey) || 0;
-                    if (agentsInCell < minAgents) {
-                        minAgents = agentsInCell;
-                        bestCells = [cell];
-                    } else if (agentsInCell === minAgents) {
-                        bestCells.push(cell);
-                    }
-                }
-
-                if (bestCells.length > 1) {
+                const otherAgents = agents.filter(a => a.id !== this.id && a.isAlive);
+                if (otherAgents.length === 0) {
+                    // Если нет других агентов, выбираем ячейку с максимальным сахаром
                     let maxSugar = -1;
                     let maxSugarCells = [];
-                    for (let cell of bestCells) {
+    
+                    for (let cell of availableCells) {
                         if (cell.currentSugar > maxSugar) {
                             maxSugar = cell.currentSugar;
                             maxSugarCells = [cell];
@@ -150,17 +135,44 @@ export class Agent {
                             maxSugarCells.push(cell);
                         }
                     }
-                    if (maxSugarCells.length > 0) {
-                        return maxSugarCells[Math.floor(Math.random() * maxSugarCells.length)];
-                    } else {
-                        return bestCells[Math.floor(Math.random() * bestCells.length)];
-                    }
-                } else if (bestCells.length === 1) {
-                    return bestCells[0];
+                    return maxSugarCells[Math.floor(Math.random() * maxSugarCells.length)];
                 } else {
-                    return null;
+                    let bestCells = [];
+                    let maxScore = -1;
+    
+                    for (let cell of availableCells) {
+                        let minDist = Number.MAX_SAFE_INTEGER;
+    
+                        for (let otherAgent of otherAgents) {
+                            const dx = cell.position.x - otherAgent.position.x;
+                            const dy = cell.position.y - otherAgent.position.y;
+                            const dist = Math.hypot(dx, dy);
+                            if (dist < minDist) {
+                                minDist = dist;
+                            }
+                        }
+    
+                        // Теперь вычисляем оценку для ячейки
+                        const weight_distance = 1.0; // Вес для расстояния
+                        const weight_sugar = 0.1;    // Вес для сахара
+                        const score = weight_distance * minDist + weight_sugar * cell.currentSugar;
+    
+                        if (score > maxScore) {
+                            maxScore = score;
+                            bestCells = [cell];
+                        } else if (score === maxScore) {
+                            bestCells.push(cell);
+                        }
+                    }
+    
+                    if (bestCells.length > 0) {
+                        return bestCells[Math.floor(Math.random() * bestCells.length)];
+                    } else {
+                        return null;
+                    }
                 }
-
+                break;
+    
             default:
                 return availableCells[Math.floor(Math.random() * availableCells.length)];
         }
